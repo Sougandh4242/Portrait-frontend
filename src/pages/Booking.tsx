@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { CalendarDays, Clock, Upload, CreditCard, ChevronLeft, ChevronRight } from "lucide-react";
 import { FadeIn } from "@/components/animations/MotionElements";
@@ -18,6 +18,8 @@ const Booking = () => {
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Simple calendar for current month
   const now = new Date();
@@ -130,11 +132,39 @@ const Booking = () => {
                     <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-3">
                       <Upload className="text-accent" size={24} /> Upload Reference
                     </h2>
-                    <div className="border-2 border-dashed border-border rounded-sm p-12 text-center hover:border-accent/50 transition-colors cursor-pointer">
+                    <div
+                      className="border-2 border-dashed border-border rounded-sm p-12 text-center hover:border-accent/50 transition-colors cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/jpeg,image/png"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) setSelectedFile(file);
+                        }}
+                      />
                       <Upload className="mx-auto text-muted-foreground mb-4" size={40} />
-                      <p className="text-muted-foreground mb-2">Drag & drop your photo here</p>
-                      <p className="text-xs text-muted-foreground/60">JPG, PNG up to 10MB</p>
-                      <button className="btn-outline mt-6 text-sm py-2 px-5">Browse Files</button>
+                      {selectedFile ? (
+                        <p className="text-foreground font-medium">{selectedFile.name}</p>
+                      ) : (
+                        <>
+                          <p className="text-muted-foreground mb-2">Drag & drop your photo here</p>
+                          <p className="text-xs text-muted-foreground/60">JPG, PNG up to 10MB</p>
+                        </>
+                      )}
+                      <button
+                        type="button"
+                        className="btn-outline mt-6 text-sm py-2 px-5"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          fileInputRef.current?.click();
+                        }}
+                      >
+                        Browse Files
+                      </button>
                     </div>
                   </div>
                 )}
