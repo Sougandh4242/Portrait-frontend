@@ -13,7 +13,7 @@ const AdminSidebar = () => {
     "flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-all";
 
   return (
-    <aside className="w-64 h-screen fixed left-0 top-0 bg-background border-r border-border p-4 flex flex-col">
+    <aside className="hidden md:block w-64 bg-background border-r min-h-screen p-4">
       
       <h2 className="text-xl font-bold mb-8">Admin Panel</h2>
 

@@ -569,8 +569,9 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
             {/* Summary */}
             <div>
               <FadeIn delay={0.3}>
-                <div className="glass rounded-sm p-8 sticky top-28">
+                <div className="glass rounded-sm p-8 sticky top-28 max-w-md mx-auto">
                   <h3 className="font-display text-xl font-bold mb-6">Order Summary</h3>
+
                   <div className="space-y-4 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Name</span>
@@ -578,46 +579,51 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
                         {customerName || "—"}
                       </span>
                     </div>
+
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Email</span>
                       <span className="font-medium">
                         {customerEmail || "—"}
                       </span>
                     </div>
+
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Phone</span>
                       <span className="font-medium">
                         {customerPhone || "—"}
                       </span>
                     </div>
-                    {/*Address summary with only city*/}
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">City</span>
-                      <span className="font-medium">
-                        {address?.city || "—"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Time</span>
-                      <span className="font-medium">{selectedTime || "—"}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Package</span>
-                      <span className="font-medium">
-                        {selectedPackage ? selectedPackage.size : "—"}
-                      </span>
-                    </div>
 
-                    <div className="border-t border-border pt-4 flex justify-between">
-                      <span className="font-display font-bold">Total</span>
-                      <span className="font-display font-bold text-accent">
-                        {selectedPackage ? `₹${selectedPackage.price}` : "—"}
-                      </span>
+                    {/* Address summary with only city */}
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">City</span>
+                        <span className="font-medium">
+                          {address?.city || "—"}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Time</span>
+                        <span className="font-medium">{selectedTime || "—"}</span>
+                      </div>
+
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Package</span>
+                        <span className="font-medium">
+                          {selectedPackage ? selectedPackage.size : "—"}
+                        </span>
+                      </div>
+
+                      <div className="border-t border-border pt-4 flex justify-between">
+                        <span className="font-display font-bold">Total</span>
+                        <span className="font-display font-bold text-accent">
+                          {selectedPackage ? `₹${selectedPackage.price}` : "—"}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </FadeIn>
-            </div>
+                </FadeIn>
+              </div>
           </div>
         </div>
       </section>
