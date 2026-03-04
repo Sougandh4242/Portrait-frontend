@@ -247,34 +247,34 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
             </div>
           </FadeIn>
 
-     {/* Steps indicator */}
-<FadeIn delay={0.2}>
-  <div className="w-full overflow-x-auto">
-    <div className="flex items-center justify-start md:justify-center gap-2 mb-12 min-w-max px-4">
-      {[1, 2, 3, 4, 5].map((s) => (
-        <div key={s} className="flex items-center gap-2">
-          <div
-            className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-              step >= s
-                ? "bg-accent text-accent-foreground"
-                : "bg-muted text-muted-foreground"
-            }`}
-          >
-            {s}
-          </div>
+        {/* Steps indicator */}
+        <FadeIn delay={0.2}>
+          <div className="flex justify-center items-center gap-1 sm:gap-2 mb-12 px-2">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <div key={s} className="flex items-center gap-1 sm:gap-2">
+                
+                <div
+                  className={`w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-all ${
+                    step >= s
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {s}
+                </div>
 
-          {s < 5 && (
-            <div
-              className={`w-10 h-px ${
-                step > s ? "bg-accent" : "bg-border"
-              }`}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  </div>
-</FadeIn>
+                {s < 5 && (
+                  <div
+                    className={`w-4 sm:w-10 h-px ${
+                      step > s ? "bg-accent" : "bg-border"
+                    }`}
+                  />
+                )}
+
+              </div>
+            ))}
+          </div>
+        </FadeIn>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main content */}
