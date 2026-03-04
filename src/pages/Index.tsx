@@ -4,17 +4,22 @@ import { ArrowRight, Star, Upload, Calendar, Pencil, Truck } from "lucide-react"
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animations/MotionElements";
 import { Layout } from "@/components/layout/Layout";
 import heroBg from "@/assets/hero-bg.jpg";
-import portrait1 from "@/assets/portrait-1.jpg";
-import portrait2 from "@/assets/portrait-2.jpg";
-import portrait3 from "@/assets/portrait-3.jpg";
-import portrait4 from "@/assets/portrait-4.jpg";
 
-const featuredWorks = [
-  { src: portrait1, title: "Ethereal Grace", category: "Individual" },
-  { src: portrait2, title: "Wisdom Lines", category: "Individual" },
-  { src: portrait3, title: "Together Forever", category: "Couples" },
-  { src: portrait4, title: "Loyal Companion", category: "Pets" },
-];
+// import portrait1 from "@/assets/portrait-1.jpg";
+// import portrait2 from "@/assets/portrait-2.jpg";
+// import portrait3 from "@/assets/portrait-3.jpg";
+// import portrait4 from "@/assets/portrait-4.jpg";
+import { useEffect, useState } from "react";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+// const featuredWorks = [
+//   { src: portrait1, title: "Ethereal Grace", category: "Individual" },
+//   { src: portrait2, title: "Wisdom Lines", category: "Individual" },
+//   { src: portrait3, title: "Together Forever", category: "Couples" },
+//   { src: portrait4, title: "Loyal Companion", category: "Pets" },
+// ];
+
 
 const processSteps = [
   { icon: Upload, title: "Upload Photo", desc: "Send us your favourite reference photograph" },
@@ -24,18 +29,38 @@ const processSteps = [
 ];
 
 const testimonials = [
-  { name: "Sarah M.", text: "Absolutely breathtaking. The detail in my daughter's portrait brought tears to my eyes.", rating: 5 },
-  { name: "James K.", text: "I've commissioned three portraits now. Each one surpasses the last. True artistry.", rating: 5 },
-  { name: "Emily R.", text: "The pet portrait of our golden retriever is our most treasured possession. Incredible work.", rating: 5 },
+  { name: "Abhishek.", text: "Absolutely breathtaking. The detail in my daughter's portrait brought tears to my eyes.", rating: 5 },
+  { name: "Sharath.", text: "I've commissioned three portraits now. Each one surpasses the last. True artistry.", rating: 5 },
+  { name: "Sougandh.", text: "Fantastic work! The portrait is highly realistic and captures every detail perfectly.", rating: 5 },
 ];
 
 const Index = () => {
+  const [featured, setFeatured] = useState<any[]>([]);
+  const [content, setContent] = useState<any>(null);
+
+  useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL}/api/site-content`)
+    .then(res => res.json())
+    .then(data => setContent(data))
+    .catch(err => console.error(err));
+}, []);
+
+useEffect(() => {
+  fetch(`${API_BASE}/api/gallery`)
+    .then((res) => res.json())
+    .then((data) => {
+      const featuredImages = data.filter((img) => img.featured);
+      setFeatured(featuredImages.slice(0, 4)); // show only 4 on home
+    });
+}, []);
+
   return (
     <Layout>
       {/* Hero */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={heroBg} alt="Pencil portrait artwork in progress" className="w-full h-full object-cover" />
+          <img src={content?.heroImage || "/placeholder.jpg"} alt="Hero Image" className="w-full h-full object-cover" />
+          {/* <img src={heroBg} alt="Pencil portrait artwork in progress" className="w-full h-full object-cover" /> */}
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/30" />
         </div>
 
@@ -99,29 +124,21 @@ const Index = () => {
           </FadeIn>
 
           <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredWorks.map((work, i) => (
-              <StaggerItem key={i}>
-                <Link to="/gallery">
-                  <motion.div
-                    whileHover={{ y: -8 }}
-                    className="group relative overflow-hidden rounded-sm cursor-pointer"
-                  >
-                    <div className="aspect-[3/4] overflow-hidden">
-                      <img
-                        src={work.src}
-                        alt={work.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                      <p className="text-xs tracking-[0.15em] uppercase text-accent mb-1">{work.category}</p>
-                      <h3 className="font-display text-lg font-semibold text-primary-foreground">{work.title}</h3>
-                    </div>
-                  </motion.div>
-                </Link>
-              </StaggerItem>
-            ))}
+            {featured.map((item, index) => (
+  <motion.div
+    key={item._id}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: index * 0.1 }}
+    className="rounded-lg overflow-hidden shadow-xl"
+  >
+    <img
+      src={item.imageUrl}
+      alt="Featured Portrait"
+      className="w-full h-80 object-cover hover:scale-105 transition duration-500"
+    />
+  </motion.div>
+))}
           </StaggerContainer>
 
           <FadeIn delay={0.3}>

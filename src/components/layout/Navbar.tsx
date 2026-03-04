@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Moon, Sun } from "lucide-react";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -15,17 +15,35 @@ const navLinks = [
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "light"
+  );
+
   const location = useLocation();
 
+  // Scroll effect
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close mobile on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location]);
+
+  // Apply theme
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   return (
     <header
@@ -34,7 +52,10 @@ export const Navbar = () => {
       }`}
     >
       <nav className="container mx-auto flex items-center justify-between px-6">
-        <Link to="/" className="font-display text-xl md:text-2xl font-bold tracking-tight text-foreground">
+        <Link
+          to="/"
+          className="font-display text-xl md:text-2xl font-bold tracking-tight text-foreground"
+        >
           Artistry<span className="text-accent">.</span>
         </Link>
 
@@ -45,12 +66,23 @@ export const Navbar = () => {
               key={link.to}
               to={link.to}
               className={`text-sm font-medium tracking-wide transition-colors duration-300 hover:text-accent ${
-                location.pathname === link.to ? "text-accent" : "text-foreground/70"
+                location.pathname === link.to
+                  ? "text-accent"
+                  : "text-foreground/70"
               }`}
             >
               {link.label}
             </Link>
           ))}
+
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-md border border-foreground/20 hover:bg-accent/10 transition"
+          >
+            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
+
           <Link to="/booking" className="btn-gold text-sm py-2 px-6">
             Book Now
           </Link>
@@ -81,12 +113,23 @@ export const Navbar = () => {
                   key={link.to}
                   to={link.to}
                   className={`text-lg font-medium py-2 transition-colors ${
-                    location.pathname === link.to ? "text-accent" : "text-foreground/70"
+                    location.pathname === link.to
+                      ? "text-accent"
+                      : "text-foreground/70"
                   }`}
                 >
                   {link.label}
                 </Link>
               ))}
+
+              <button
+                onClick={toggleTheme}
+                className="flex items-center gap-2 py-2"
+              >
+                {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+                Toggle Theme
+              </button>
+
               <Link to="/booking" className="btn-gold text-center mt-2">
                 Book Now
               </Link>

@@ -1,32 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animations/MotionElements";
+import { FadeIn } from "@/components/animations/MotionElements";
 import { Layout } from "@/components/layout/Layout";
-import portrait1 from "@/assets/portrait-1.jpg";
-import portrait2 from "@/assets/portrait-2.jpg";
-import portrait3 from "@/assets/portrait-3.jpg";
-import portrait4 from "@/assets/portrait-4.jpg";
-import heroBg from "@/assets/hero-bg.jpg";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const categories = ["All", "Individual", "Couples", "Family", "Pets", "Celebrity"];
-
-const galleryItems = [
-  { src: portrait1, title: "Ethereal Grace", category: "Individual", size: "large" },
-  { src: portrait2, title: "Wisdom Lines", category: "Individual", size: "medium" },
-  { src: portrait3, title: "Together Forever", category: "Couples", size: "large" },
-  { src: portrait4, title: "Loyal Companion", category: "Pets", size: "medium" },
-  { src: heroBg, title: "Work in Progress", category: "Individual", size: "large" },
-  { src: portrait1, title: "Serene Beauty", category: "Individual", size: "medium" },
-  { src: portrait3, title: "Family Bond", category: "Family", size: "large" },
-  { src: portrait4, title: "Best Friend", category: "Pets", size: "medium" },
-];
 
 const Gallery = () => {
   const [filter, setFilter] = useState("All");
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [galleryItems, setGalleryItems] = useState<any[]>([]);
 
-  const filtered = filter === "All" ? galleryItems : galleryItems.filter((g) => g.category === filter);
+  useEffect(() => {
+    fetch(`${API_BASE}/api/gallery`)
+      .then((res) => res.json())
+      .then((data) => setGalleryItems(data));
+  }, []);
+
+  const filtered =
+    filter === "All"
+      ? galleryItems
+      : galleryItems.filter((g) => g.category === filter);
 
   return (
     <Layout>
@@ -34,8 +30,12 @@ const Gallery = () => {
         <div className="container mx-auto">
           <FadeIn>
             <div className="text-center mb-12">
-              <p className="text-accent tracking-[0.2em] uppercase text-sm mb-3">Portfolio</p>
-              <h1 className="font-display text-5xl md:text-6xl font-bold">Gallery</h1>
+              <p className="text-accent tracking-[0.2em] uppercase text-sm mb-3">
+                Portfolio
+              </p>
+              <h1 className="font-display text-5xl md:text-6xl font-bold">
+                Gallery
+              </h1>
             </div>
           </FadeIn>
 
@@ -63,7 +63,7 @@ const Gallery = () => {
             <AnimatePresence mode="popLayout">
               {filtered.map((item, i) => (
                 <motion.div
-                  key={`${item.title}-${i}`}
+                  key={item._id}
                   layout
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -74,14 +74,20 @@ const Gallery = () => {
                 >
                   <div className="relative overflow-hidden rounded-sm">
                     <img
-                      src={item.src}
-                      alt={item.title}
+                      src={item.imageUrl}
+                      alt={item.title || "Portrait"}
                       className="w-full transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
                       <div>
-                        <p className="text-xs text-accent tracking-wider uppercase">{item.category}</p>
-                        <h3 className="font-display text-lg text-primary-foreground font-semibold">{item.title}</h3>
+                        <p className="text-xs text-accent tracking-wider uppercase">
+                          {item.category}
+                        </p>
+                        {item.title && (
+                          <h3 className="font-display text-lg text-primary-foreground font-semibold">
+                            {item.title}
+                          </h3>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -112,8 +118,8 @@ const Gallery = () => {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              src={filtered[lightbox]?.src}
-              alt={filtered[lightbox]?.title}
+              src={filtered[lightbox]?.imageUrl}
+              alt="Preview"
               className="max-w-full max-h-[85vh] object-contain rounded-sm"
               onClick={(e) => e.stopPropagation()}
             />

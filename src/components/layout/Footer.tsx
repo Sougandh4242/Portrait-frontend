@@ -1,5 +1,16 @@
 import { Link } from "react-router-dom";
-import { Instagram, Facebook, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
+
+const instagramUsername = import.meta.env.VITE_INSTAGRAM_USERNAME;
+const facebookUsername = import.meta.env.VITE_FACEBOOK_USERNAME;
+
+const instagramUrl = instagramUsername
+  ? `https://instagram.com/${instagramUsername}`
+  : "#";
+
+const facebookUrl = facebookUsername
+  ? `https://facebook.com/${facebookUsername}`
+  : "#";
 
 export const Footer = () => (
   <footer className="bg-primary text-primary-foreground">
@@ -41,13 +52,13 @@ export const Footer = () => (
           <h4 className="font-display text-lg font-semibold mb-4">Contact</h4>
           <div className="flex flex-col gap-3 text-sm text-primary-foreground/60">
             <div className="flex items-center gap-2">
-              <Mail size={14} /> hello@artistryportraits.com
+              <Mail size={14} /> portraitbooking05@gmail.com
             </div>
             <div className="flex items-center gap-2">
-              <Phone size={14} /> +1 (555) 123-4567
+              <Phone size={14} /> +91 8105015350
             </div>
             <div className="flex items-center gap-2">
-              <MapPin size={14} /> New York, NY
+              <MapPin size={14} /> Bangalore, India
             </div>
           </div>
         </div>
@@ -56,15 +67,23 @@ export const Footer = () => (
         <div>
           <h4 className="font-display text-lg font-semibold mb-4">Follow</h4>
           <div className="flex gap-4">
-            {[Instagram, Facebook, Twitter].map((Icon, i) => (
-              <a
-                key={i}
-                href="#"
-                className="w-10 h-10 rounded-full border border-primary-foreground/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-all duration-300"
-              >
-                <Icon size={16} />
-              </a>
-            ))}
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full border border-primary-foreground/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-all duration-300"
+            >
+              <Instagram size={16} />
+            </a>
+
+            <a
+              href={facebookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full border border-primary-foreground/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-all duration-300"
+            >
+              <Facebook size={16} />
+            </a>
           </div>
         </div>
       </div>

@@ -1,91 +1,178 @@
+import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Package, Pencil, CheckCircle2, Truck } from "lucide-react";
-import { FadeIn } from "@/components/animations/MotionElements";
-import { Layout } from "@/components/layout/Layout";
 
-const statuses = [
-  { icon: Package, label: "Order Placed", date: "Feb 15, 2026", done: true },
-  { icon: Pencil, label: "In Progress", date: "Feb 17, 2026", done: true },
-  { icon: CheckCircle2, label: "Completed", date: "Expected Feb 22", done: false },
-  { icon: Truck, label: "Delivered", date: "Expected Feb 25", done: false },
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+const statusSteps = [
+  "pending",
+  "in-progress",
+  "completed",
+  "delivered",
 ];
 
-const OrderTracking = () => {
-  const [query, setQuery] = useState("");
-  const [tracked, setTracked] = useState(false);
+const statusLabels: Record<string, string> = {
+  pending: "Order Placed",
+  "in-progress": "In Progress",
+  completed: "Completed",
+  delivered: "Delivered",
+};
+
+const TrackOrder = () => {
+  const [orderId, setOrderId] = useState("");
+  const [order, setOrder] = useState<any>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleTrack = async () => {
+    if (!orderId.trim()) return;
+
+    setLoading(true);
+    setError("");
+    setOrder(null);
+
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/bookings/track/${orderId}`
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Order not found");
+      } else {
+        setOrder(data);
+      }
+    } catch (err) {
+      setError("Server error");
+    }
+
+    setLoading(false);
+  };
+
+  const currentStepIndex = order
+    ? statusSteps.indexOf(order.orderStatus)
+    : -1;
 
   return (
     <Layout>
-      <section className="pt-28 pb-16 section-padding bg-background min-h-screen">
-        <div className="container mx-auto max-w-2xl">
-          <FadeIn>
-            <div className="text-center mb-12">
-              <p className="text-accent tracking-[0.2em] uppercase text-sm mb-3">Order Status</p>
-              <h1 className="font-display text-5xl md:text-6xl font-bold">Track Your Order</h1>
-            </div>
-          </FadeIn>
+    <div className="min-h-screen bg-background pt-28 px-4">
+      <div className="max-w-3xl mx-auto">
 
-          <FadeIn delay={0.2}>
-            <div className="glass rounded-sm p-8 mb-10">
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  placeholder="Enter email or phone number"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="flex-1 bg-secondary rounded-sm px-5 py-3 text-sm outline-none focus:ring-2 ring-accent/30 transition-all"
-                />
-                <button onClick={() => setTracked(true)} className="btn-gold py-3 px-6 text-sm flex items-center gap-2">
-                  <Search size={16} /> Track
-                </button>
-              </div>
-            </div>
-          </FadeIn>
-
-          {tracked && (
-            <FadeIn>
-              <div className="glass rounded-sm p-8">
-                <h3 className="font-display text-xl font-bold mb-2">Order #AP-2026-0215</h3>
-                <p className="text-muted-foreground text-sm mb-8">11" × 14" — Individual Portrait</p>
-
-                <div className="relative">
-                  {/* Timeline line */}
-                  <div className="absolute left-6 top-0 bottom-0 w-px bg-border" />
-
-                  <div className="space-y-8">
-                    {statuses.map((s, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.15 }}
-                        className="flex items-start gap-5 relative"
-                      >
-                        <div
-                          className={`relative z-10 w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
-                            s.done ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          <s.icon size={20} />
-                        </div>
-                        <div className="pt-2">
-                          <p className={`font-medium ${s.done ? "text-foreground" : "text-muted-foreground"}`}>
-                            {s.label}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-0.5">{s.date}</p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
-          )}
+        {/* Heading */}
+        <div className="text-center mb-10">
+          <p className="text-accent uppercase tracking-widest text-sm">
+            Order Status
+          </p>
+          <h1 className="text-5xl font-display font-bold">
+            Track Your Order
+          </h1>
         </div>
-      </section>
+
+        {/* Search Box */}
+        <div className="flex gap-4 mb-10">
+          <input
+            type="text"
+            placeholder="Enter your Order ID"
+            value={orderId}
+            onChange={(e) => setOrderId(e.target.value)}
+            className="flex-1 px-4 py-3 rounded-xl bg-secondary"
+          />
+          <button
+            onClick={handleTrack}
+            className="px-6 py-3 bg-accent text-black rounded-xl"
+          >
+            {loading ? "Tracking..." : "Track"}
+          </button>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="text-red-500 mb-6">{error}</div>
+        )}
+
+        {/* Order Result */}
+        {order && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-secondary p-8 rounded-2xl shadow-xl"
+          >
+            <h2 className="text-xl font-semibold mb-2">
+              Order #{order.orderId}
+            </h2>
+
+            <p className="text-muted-foreground mb-8">
+              Booking Date: {order.date} • {order.time}
+            </p>
+
+ <div className="mb-10">
+  <p className="text-xs uppercase tracking-[0.25em] text-accent mb-3">
+    Client Name
+  </p>
+
+  <div className="inline-block px-6 py-3 rounded-2xl
+                  bg-white/40 dark:bg-white/10
+                  backdrop-blur-md
+                  border border-black/5 dark:border-white/20
+                  shadow-lg">
+    <p className="font-display text-2xl md:text-3xl font-semibold
+                  text-gray-900 dark:text-white tracking-wide">
+      {order.name}
+    </p>
+  </div>
+</div>
+
+            {/* Timeline */}
+            <div className="space-y-8">
+              {statusSteps.map((step, index) => {
+                const isActive = index <= currentStepIndex;
+
+                return (
+                  <div key={step} className="flex items-start gap-4">
+                    <div
+                      className={`w-10 h-10 flex items-center justify-center rounded-full 
+                      ${
+                        isActive
+                          ? "bg-accent text-black"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+
+                    <div>
+                      <p
+                        className={`font-semibold ${
+                          isActive ? "" : "text-muted-foreground"
+                        }`}
+                      >
+                        {statusLabels[step]}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Payment Info */}
+            <div className="mt-8 pt-6 border-t border-border">
+              <p>
+                Payment Status:{" "}
+                <span className="font-semibold">
+                  {order.paymentStatus}
+                </span>
+              </p>
+              <p>
+                Amount Paid: ₹ {order.amount}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
     </Layout>
   );
 };
 
-export default OrderTracking;
+export default TrackOrder;
