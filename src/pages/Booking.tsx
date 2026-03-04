@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CalendarDays, Clock, Upload, CreditCard, ChevronLeft, ChevronRight } from "lucide-react";
 import { FadeIn } from "@/components/animations/MotionElements";
@@ -20,6 +20,13 @@ const Booking = () => {
   const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+  window.scrollTo({
+    top: 120,
+    behavior: "smooth"
+  });
+}, [step]);
 
  const [customerName, setCustomerName] = useState("");
  const [customerEmail, setCustomerEmail] = useState("");

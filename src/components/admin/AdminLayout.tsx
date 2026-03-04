@@ -12,21 +12,21 @@ const AdminLayout = ({ children }) => {
         <AdminSidebar />
       </div>
 
-      {/* Mobile Sidebar */}
-      {openSidebar && (
-        <div className="fixed top-0 left-0 h-full w-64 bg-white z-50 shadow-lg">
-          {/* Sidebar */}
-          <div className="w-64 bg-white shadow-lg">
-            <AdminSidebar />
-          </div>
+     {/* Mobile Sidebar */}
+{openSidebar && (
+  <>
+    {/* Overlay */}
+    <div
+      className="fixed inset-0 bg-black/40 z-40"
+      onClick={() => setOpenSidebar(false)}
+    ></div>
 
-          {/* Overlay */}
-          <div
-            className="flex-1 bg-black/30"
-            onClick={() => setOpenSidebar(false)}
-          />
-        </div>
-      )}
+    {/* Sidebar */}
+    <div className="fixed top-0 left-0 h-full w-64 bg-white z-50 shadow-lg">
+      <AdminSidebar />
+    </div>
+  </>
+)}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">

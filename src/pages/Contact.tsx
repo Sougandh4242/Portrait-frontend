@@ -168,16 +168,19 @@ const Contact = () => {
 
             {/* Info */}
             <FadeIn direction="right">
-              <div className="space-y-6">
+            <div className="space-y-6">
                 <div className="glass rounded-sm p-6 flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
                     <Mail className="text-accent" size={20} />
                   </div>
+
                   <div>
                     <h3 className="font-display font-semibold mb-1">Email</h3>
-                    <p className="text-sm text-muted-foreground">
+
+                    <p className="text-sm text-muted-foreground break-words">
                       {import.meta.env.VITE_CONTACT_EMAIL || "your@email.com"}
                     </p>
+
                   </div>
                 </div>
 
