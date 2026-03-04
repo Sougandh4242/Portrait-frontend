@@ -14,7 +14,7 @@ const AdminLayout = ({ children }) => {
 
       {/* Mobile Sidebar */}
       {openSidebar && (
-        <div className="fixed inset-0 z-50 flex">
+        <div className="fixed top-0 left-0 h-full w-64 bg-white z-50 shadow-lg">
           {/* Sidebar */}
           <div className="w-64 bg-white shadow-lg">
             <AdminSidebar />
