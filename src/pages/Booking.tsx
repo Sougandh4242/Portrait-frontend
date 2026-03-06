@@ -7,10 +7,10 @@ import { Layout } from "@/components/layout/Layout";
 const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
 
 const prices = [
-  { size: '8" × 10"', faces: "1 Person", price: 1500, popular: false },
-  { size: '11" × 14"', faces: "1–2 People", price: 2500, popular: true },
-  { size: '16" × 20"', faces: "1–4 People", price: 4000, popular: false },
-  { size: '18" × 24"', faces: "Any", price: 5500, popular: false },
+  { size: '8" × 10"', faces: "1 Person", price: 10, popular: false },
+  { size: '11" × 14"', faces: "1–2 People", price: 15, popular: true },
+  { size: '16" × 20"', faces: "1–4 People", price: 5, popular: false },
+  { size: '18" × 24"', faces: "Any", price: 1, popular: false },
 ];
 
 const Booking = () => {
