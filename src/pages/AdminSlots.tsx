@@ -94,7 +94,7 @@ const AdminSlots = () => {
   </div>
 
 </div>
-    <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl">
+    
       {/* Calendar */}
 
       <Calendar
@@ -132,9 +132,9 @@ const AdminSlots = () => {
             return <div className="text-[10px] mt-1">Full</div>;
 
           return (
-            <div className="text-[10px] mt-1 font-semibold">
-              {stat.blocked ? "Blocked" : `${stat.count}/${stat.max}`}
-            </div>
+    <div className="text-[10px] mt-1 font-semibold">
+      {stat.count}/{stat.max}
+    </div>
           );
         }}
       />
@@ -206,7 +206,7 @@ const AdminSlots = () => {
 
       </motion.div>
     </div>
-    </div>
+    
   );
 };
 
