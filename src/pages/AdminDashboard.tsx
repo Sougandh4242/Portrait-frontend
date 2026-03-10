@@ -72,24 +72,27 @@ const AdminDashboard = () => {
 
   return (
     <div className="space-y-10">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {cards.map((card, index) => (
-          <motion.div
-            key={card.label}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.05 }}
-            className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-6 rounded-2xl shadow-xl"
-          >
-            <h3 className="text-sm uppercase tracking-wide opacity-80">
-              {card.label}
-            </h3>
-            <p className="text-3xl font-bold mt-2">{card.value}</p>
-          </motion.div>
-        ))}
-      </div>
+    {/* Stats Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {cards.map((card, index) => (
+        <motion.div
+          key={card.label}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 }}
+          whileHover={{ scale: 1.02 }}
+          className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-xl shadow-sm hover:shadow-md transition"
+        >
+          <h3 className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            {card.label}
+          </h3>
+
+          <p className="text-3xl font-semibold mt-2 text-zinc-900 dark:text-white">
+            {card.value}
+          </p>
+        </motion.div>
+      ))}
+    </div>
 
       {/* Revenue Chart */}
       <motion.div

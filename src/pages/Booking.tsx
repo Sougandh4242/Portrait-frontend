@@ -4,7 +4,7 @@ import { CalendarDays, Clock, Upload, CreditCard, ChevronLeft, ChevronRight } fr
 import { FadeIn } from "@/components/animations/MotionElements";
 import { Layout } from "@/components/layout/Layout";
 
-const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
+// const timeSlots = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
 
 const prices = [
   { size: '8" × 10"', faces: "1 Person", price: 10, popular: false },
@@ -16,10 +16,32 @@ const prices = [
 const Booking = () => {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  // const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
+  const [fullDates, setFullDates] = useState<string[]>([]);
+
+  useEffect(() => {
+  const fetchUnavailableDates = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/bookings/unavailable-dates`
+      );
+
+      const data = await res.json();
+
+      setBlockedDates(data.blocked || []);
+      setFullDates(data.full || []);
+
+    } catch (err) {
+      console.error("Failed to fetch unavailable dates");
+    }
+  };
+
+  fetchUnavailableDates();
+}, []);
 
   useEffect(() => {
   window.scrollTo({
@@ -108,7 +130,7 @@ const goToPreviousMonth = () => {
   // console.log(customerEmail);
   // console.log(customerPhone);
   try {
-    if (!selectedDate || !selectedTime || !selectedPrice || !selectedFile || !customerName || !customerEmail || !customerPhone || !address.line1 || !address.city || !address.state || !address.pincode) {
+    if (!selectedDate  || !selectedPrice || !selectedFile || !customerName || !customerEmail || !customerPhone || !address.line1 || !address.city || !address.state || !address.pincode) {
       alert("Please complete all steps before payment.");
       return;
     }
@@ -150,7 +172,6 @@ const goToPreviousMonth = () => {
         body: JSON.stringify({
           amount: selectedPrice,
           date: formattedDate,
-          time: selectedTime,
         }),
       }
     );
@@ -189,7 +210,6 @@ const goToPreviousMonth = () => {
             email: customerEmail,
             phone: customerPhone,
             date: formattedDate,
-            time: selectedTime,
             amount: selectedPrice,
             imageUrl: uploadData.imageUrl,
             address: {
@@ -292,7 +312,6 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
       Enter Your Details
     </h2>
 
-    {/* Personal Info */}
     <div className="space-y-4 mb-8">
       <input
         type="text"
@@ -318,17 +337,20 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
         className="w-full border border-border p-3 rounded-lg bg-background"
       />
     </div>
+  </div>
+)}
 
-    {/* Address Sub Card */}
+{step === 2 && (
+  <div>
+    <h2 className="font-display text-2xl font-bold mb-8">
+      Address Details
+    </h2>
+
     <div className="rounded-2xl p-6
                     bg-white/40 dark:bg-white/10
                     backdrop-blur-md
                     border border-black/5 dark:border-white/20
                     shadow-lg space-y-4">
-
-      <h3 className="font-display text-lg font-semibold mb-2">
-        Address Details
-      </h3>
 
       <input
         placeholder="Address Line"
@@ -389,13 +411,12 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
   </div>
 )}
 
-                {step === 2 && (
+{step === 3 && (
   <div>
     <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-3">
       <CalendarDays className="text-accent" size={24} /> Select Date
     </h2>
 
-    {/* Month Navigation */}
     <div className="flex items-center justify-between mb-4">
       <button
         onClick={goToPreviousMonth}
@@ -418,7 +439,6 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
       </button>
     </div>
 
-    {/* Calendar Grid */}
     <div className="grid grid-cols-7 gap-2 text-center text-sm">
       {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
         <div key={d} className="text-muted-foreground font-medium py-2">
@@ -426,12 +446,10 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
         </div>
       ))}
 
-      {/* Empty slots before first day */}
       {Array.from({ length: firstDay }).map((_, i) => (
         <div key={`empty-${i}`} />
       ))}
 
-      {/* Days */}
       {Array.from({ length: daysInMonth }).map((_, i) => {
         const day = i + 1;
         const fullDate = new Date(year, month, day);
@@ -440,6 +458,13 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
           fullDate <
           new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
+        const formatted = `${fullDate.getFullYear()}-${String(
+          fullDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(fullDate.getDate()).padStart(2, "0")}`;
+
+        const isBlocked = blockedDates.includes(formatted);
+        const isFull = fullDates.includes(formatted);
+
         const isSelected =
           selectedDate &&
           fullDate.toDateString() === selectedDate.toDateString();
@@ -447,16 +472,16 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
         return (
           <button
             key={day}
-            disabled={isPast}
+            disabled={isPast || isBlocked || isFull}
             onClick={() => setSelectedDate(fullDate)}
             className={`py-2 rounded-sm text-sm font-medium transition-all ${
               isSelected
                 ? "bg-accent text-accent-foreground"
-                : isPast
+                : isPast || isBlocked || isFull
                 ? "text-muted-foreground/30 cursor-not-allowed"
                 : "hover:bg-secondary"
             }`}
-          >
+                      >
             {day}
           </button>
         );
@@ -468,29 +493,6 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
     </p>
   </div>
 )}
-
-                {step === 3 && (
-                  <div>
-                    <h2 className="font-display text-2xl font-bold mb-6 flex items-center gap-3">
-                      <Clock className="text-accent" size={24} /> Select Time
-                    </h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      {timeSlots.map((t) => (
-                        <button
-                          key={t}
-                          onClick={() => setSelectedTime(t)}
-                          className={`py-3 rounded-sm text-sm font-medium transition-all border ${
-                            selectedTime === t
-                              ? "bg-accent text-accent-foreground border-accent"
-                              : "border-border hover:border-accent/50"
-                          }`}
-                        >
-                          {t}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {step === 4 && (
                   <div>
@@ -618,11 +620,6 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
                         <span className="font-medium">
                           {address?.city || "—"}
                         </span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Time</span>
-                        <span className="font-medium">{selectedTime || "—"}</span>
                       </div>
 
                       <div className="flex justify-between">
