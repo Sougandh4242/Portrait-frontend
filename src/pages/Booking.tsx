@@ -22,6 +22,7 @@ const Booking = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const [fullDates, setFullDates] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
   const fetchUnavailableDates = async () => {
@@ -129,6 +130,7 @@ const goToPreviousMonth = () => {
 //   console.log(customerName);
   // console.log(customerEmail);
   // console.log(customerPhone);
+    setLoading(true);
   try {
     if (!selectedDate  || !selectedPrice || !selectedFile || !customerName || !customerEmail || !customerPhone || !address.line1 || !address.city || !address.state || !address.pincode) {
       alert("Please complete all steps before payment.");
@@ -186,14 +188,15 @@ const goToPreviousMonth = () => {
     // 3️⃣ Open Razorpay Checkout
 
     const options = {
-  key: import.meta.env.VITE_RAZORPAY_KEY,
-  amount: orderData.amount,
-  currency: "INR",
-  name: "Artistry",
-  description: "Portrait Booking",
-  order_id: orderData.id,
+      key: import.meta.env.VITE_RAZORPAY_KEY,
+      amount: orderData.amount,
+      currency: "INR",
+      name: "Artistry",
+      description: "Portrait Booking",
+      order_id: orderData.id,
+      redirect: true,
 
-  handler: async function (response: any) {
+    handler: async function (response: any) {
     try {
       const verifyRes = await fetch(
         `${import.meta.env.VITE_API_URL}/api/payment/verify-payment`,
@@ -249,6 +252,7 @@ razorpay.open();
 
   } catch (error) {
     // console.error("Payment error:", error);
+    setLoading(false);
     window.location.href = "/booking-failed";
   }
 };
@@ -580,7 +584,13 @@ const selectedPackage = prices.find(p => p.price === selectedPrice);
                       Next <ChevronRight size={16} />
                     </button>
                   ) : (
-                    <button onClick={handlePayment}  className="btn-gold py-2 px-5 text-sm">  Proceed to Payment</button>
+                    <button
+                      onClick={handlePayment}
+                      disabled={loading}
+                      className="btn-gold py-2 px-5 text-sm flex items-center gap-2 disabled:opacity-60"
+                    >
+                      {loading ? "🎨 Preparing your masterpiece..." : "Proceed to Payment"}
+                    </button>
                   )}
                 </div>
               </motion.div>
