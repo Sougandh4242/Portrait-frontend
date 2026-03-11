@@ -15,7 +15,7 @@ const AdminSlots = () => {
     const fetchStats = async () => {
       try {
         const res = await fetch(
-          `${API_BASE}/api/bookings/admin-date-stats`,
+          `${API_BASE}/api/admin/admin-date-stats`,
           { credentials: "include" }
         );
 
