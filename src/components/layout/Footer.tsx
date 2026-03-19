@@ -68,7 +68,7 @@ export const Footer = () => (
 
             <div className="flex items-start gap-2 break-words">
               <Phone size={14} className="mt-0.5 shrink-0" />
-              <span>+91 8105015350</span>
+              <span>+91 8861759694</span>
             </div>
 
             <div className="flex items-start gap-2 break-words">
